@@ -87,46 +87,6 @@ Visit [http://localhost:8000](http://localhost:8000).
 
 ---
 
-## 📊 Evaluation
-
-Minimal gold set (5 Q/A pairs tested):
-
-| Query                                  | Expected             | Got                  | Correct? |
-| -------------------------------------- | -------------------- | -------------------- | -------- |
-| What is the candidate’s notice period? | 2 months             | 2 months             | ✅        |
-| When does the offer letter start?      | 1st Sept 2025        | 1st Sept 2025        | ✅        |
-| Who signed the document?               | HR Manager           | HR Manager           | ✅        |
-| What is the role offered?              | Software Engineer    | Software Engineer    | ✅        |
-| What is the offered CTC?               | ₹10,00,000 per annum | ₹10,00,000 per annum | ✅        |
-
-**Precision:** ~100% (5/5)  
-**Recall:** Within top-10 retrievals for all queries.
-
----
-
-## 📝 Remarks
-
-- **Limits:** Free tiers of Cohere & Gemini were used, may throttle under heavy load.
-- **Trade-offs:**
-- Used simple fixed-size chunking instead of semantic chunking for speed.
-- Cohere reranker adds latency but boosts precision.
-- **Next steps:**
-- Add caching layer to reduce embedding calls.
-- Support images & tables from PDFs.
-- Better eval metrics with a larger gold set.
-
----
-
-## 📄 Submission Checklist
-
-- ✅ Live URL (PythonAnywhere)
-- ✅ Public GitHub repo
-- ✅ README (setup, architecture diagram, resume link)
-- ✅ Index config (Qdrant, 768-dim, cosine)
-- ✅ Remarks section
-
----
-
 ## 📎 Links
 
 - **Live Demo**: [Python Demo Link](sparshsahu.pythonanywhere.com)
