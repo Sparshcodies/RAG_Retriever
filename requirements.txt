@@ -7,3 +7,4 @@ pypdf
 pypdf2
 python-docx
 cohere
+gunicorn
