@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>RAG App</title>
+    <link rel="icon" type="image/x-icon" href="static/favicon.png">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 p-6">
+    <div class="max-w-3xl mx-auto bg-white shadow-lg rounded-lg p-6">
+        <h1 class="text-2xl font-bold mb-4">RAG Demo App</h1>
+        <h2 class="text-xl font-semibold mb-4">Assessment for Predusk Tech</h2>
+        <h6>P.S. Sorry for the incomplete Interface</h6>
+        <br>
+        <form id="textForm" class="mb-6">
+            <textarea name="text" class="w-full border rounded p-2 mb-2" rows="4"
+                      placeholder="Paste your text here..."></textarea>
+            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Submit Text</button>
+        </form>
+
+        <h3 class="text-center font-semibold mb-4">OR</h3>
+
+        <form id="fileForm" enctype="multipart/form-data" class="mb-6">
+            <input type="file" name="file" class="mb-2">
+            <button type="submit" class="bg-purple-500 text-white px-4 py-2 rounded">Upload File</button>
+        </form>
+        <div id="loading" class="hidden text-center text-gray-600 mb-4">
+            <svg class="animate-spin h-5 w-5 inline-block text-blue-500 mr-2"
+                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10"
+                        stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor"
+                      d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 100 16v-4l-3 3 3 3v-4a8 8 0 01-8-8z"></path>
+            </svg>
+            Processing, please wait...
+        </div>
+
+        <br><br>
+        <form id="queryForm" class="mb-6">
+            <input type="text" name="query" class="w-full border rounded p-2 mb-2" placeholder="Ask a question...">
+            <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">Ask</button>
+        </form>
+
+
+        <div id="answerPanel" class="hidden">
+            <h2 class="text-xl font-semibold mb-2">Answer</h2>
+            <p id="answerText" class="mb-2"></p>
+
+            <h3 class="text-lg font-semibold">Sources</h3>
+            <ul id="sourcesList" class="list-disc pl-6"></ul>
+
+            <div class="text-gray-500 text-sm mt-4" id="stats"></div>
+        </div>
+    </div>
+
+    <script>
+        async function handleIngest(url, formData, successMsg, failMsg) {
+            document.getElementById("loading").classList.remove("hidden");
+            try {
+                let response = await fetch(url, { method: "POST", body: formData });
+                if (response.ok) {
+                    console.log(successMsg);
+                    alert(successMsg);
+                } else {
+                    console.error(await response.text());
+                    alert(failMsg);
+                }
+            } finally {
+                document.getElementById("loading").classList.add("hidden");
+            }
+        }
+        document.getElementById("textForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            handleIngest("api/ingest", new FormData(e.target), "Text indexed successfully!", "Failed to index text.");
+        });
+        document.getElementById("fileForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            handleIngest("api/ingest-file", new FormData(e.target), "File uploaded successfully!", "Failed to upload file.");
+        });
+
+        document.getElementById("queryForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            let query = new FormData(e.target);
+            let start = performance.now();
+
+            let response = await fetch("api/query", { method: "POST", body: query });
+            let data = await response.json();
+            console.log("Query response:", data);
+
+            let end = performance.now();
+            let timeTaken = ((end - start) / 1000).toFixed(2);
+
+            document.getElementById("answerText").innerHTML = data.answer || "No answer found.";
+
+            document.getElementById("sourcesList").innerHTML =
+                (data.citations || [])
+                    .map(s => {
+                        let downloadBtn = s.file_path 
+                            ? `<a href="api/download-file?path=${encodeURIComponent(s.file_path)}" 
+                                  class="text-blue-600 underline ml-2" 
+                                  target="_blank">Download</a>` 
+                            : "";
+                        return `<li>[${s.id}] ${s.text_excerpt} (${s.source}) ${downloadBtn}</li>`;
+                    })
+                    .join("");
+
+            let statsText = `Time: ${timeTaken}s`;
+            if (data.timing_ms) {
+                statsText += ` | Retrieve: ${(data.timing_ms.retrieve_ms / 1000).toFixed(2)}s | Generate: ${(data.timing_ms.generate_ms / 1000).toFixed(2)}s`;
+            }
+            document.getElementById("stats").innerText = statsText;
+
+            document.getElementById("answerPanel").classList.remove("hidden");
+        });
+    </script>
+</body>
+</html>

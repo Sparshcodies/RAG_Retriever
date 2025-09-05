@@ -1,0 +1,9 @@
+Django
+python_dotenv
+google-generativeai
+qdrant_client
+djangorestframework
+pypdf
+pypdf2
+python-docx
+cohere
