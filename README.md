@@ -7,7 +7,7 @@ This app lets users upload documents (PDF/DOCX) or paste text, indexes them into
 
 ## 🚀 Live Demo
 
-Hosted at: [Render: https://sparshsahu.pythonanywhere.com] (https://sparshsahu.pythonanywhere.com)
+Hosted at: [Render](https://rag-retriever.onrender.com/)
 
 - First screen loads without console errors.  
 - You can upload files, ask questions, and see retrieved chunks, reranked results, and grounded answers with citations.
@@ -89,6 +89,6 @@ Visit [http://localhost:8000](http://localhost:8000).
 
 ## 📎 Links
 
-- **Live Demo**: [Python Demo Link](https://sparshsahu.pythonanywhere.com)
+- **Live Demo**: [Python Demo Link](https://rag-retriever.onrender.com/)
 - **GitHub Repo**: [Repo Link](https://github.com/Sparshcodies/RAG_Retriever.git)
 - **Resume**: [Google Drive Link](https://drive.google.com/file/d/1mPGwlS4fyLZ_zW5LePxdP9hEo3SaRsYc/view?usp=sharing)
